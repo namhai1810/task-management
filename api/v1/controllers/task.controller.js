@@ -1,33 +1,44 @@
 const Task = require("../models/task.model");
+const paginationHelper = require("../../../helpers/pagination");
 
-module.exports.index =  async (req, res) => {
+module.exports.index = async (req, res) => {
   const find = {
     deleted: false,
-  }
-  if(req.query.status){
+  };
+  if (req.query.status) {
     find.status = req.query.status;
   }
   // sort
-  const sort = {}
-  if(req.query.sortKey && req.query.sortValue){
+  const sort = {};
+  if (req.query.sortKey && req.query.sortValue) {
     sort[req.query.sortKey] = req.query.sortValue;
   }
   // end sort
 
-
-  const tasks = await Task.find(find).sort(sort);
+  // pagination
+  let initPagination = {
+    currentPage: 1,
+    limitItems: 2,
+  };
+  const countTasks = await Task.countDocuments(find);
+  objectPagination = paginationHelper(initPagination, req.query, countTasks);
+  // End pagination
+  const tasks = await Task.find(find)
+    .sort(sort)
+    .limit(objectPagination.limitItems)
+    .skip(objectPagination.skip);
   res.json(tasks);
-}
+};
 
-module.exports.detail =  async (req, res) => {
-  try{
+module.exports.detail = async (req, res) => {
+  try {
     const id = req.params.id;
     const task = await Task.findOne({
       _id: id,
       deleted: false,
     });
     res.json(task);
-  }catch(err){
+  } catch (err) {
     res.json("Task not found");
   }
-}
+};
