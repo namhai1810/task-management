@@ -2,31 +2,13 @@ const express = require("express");
 const app = express();
 const database = require("./config/database");
 require("dotenv").config();
-
-const Task = require("./models/task.model");  
+const routerApiVer1 = require("./api/v1/routes/index.route");
 
 database.connect();
 const port = process.env.PORT;
 
-app.get("/tasks", async (req, res) => {
-  const tasks = await Task.find({
-    deleted: false,
-  });
-  res.json(tasks);
-})
-
-app.get("/tasks/detail/:id", async (req, res) => {
-  try{
-    const id = req.params.id;
-    const task = await Task.findOne({
-      _id: id,
-      deleted: false,
-    });
-    res.json(task);
-  }catch(err){
-    res.json("Task not found");
-  }
-})
+// Router V1
+routerApiVer1(app)
 
 
 app.listen(port, () => {
