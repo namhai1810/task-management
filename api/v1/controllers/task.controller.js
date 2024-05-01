@@ -2,6 +2,7 @@ const Task = require("../models/task.model");
 const paginationHelper = require("../../../helpers/pagination");
 const searchHelper = require("../../../helpers/search");
 
+// [GET] /api/v1/tasks/
 module.exports.index = async (req, res) => {
   const find = {
     deleted: false,
@@ -38,6 +39,7 @@ module.exports.index = async (req, res) => {
   res.json(tasks);
 };
 
+// [GET] /api/v1/tasks/detail/:id
 module.exports.detail = async (req, res) => {
   try {
     const id = req.params.id;
@@ -48,5 +50,28 @@ module.exports.detail = async (req, res) => {
     res.json(task);
   } catch (err) {
     res.json("Task not found");
+  }
+};
+
+// [PATCH] /api/v1/tasks/change-status/:id
+module.exports.changeStatus = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const status = req.body.status;
+    await Task.updateOne(
+      { _id: id },
+      {
+        status: status,
+      }
+    );
+    res.json({
+      code: 200,
+      message: "Cập nhập trạng thái thành công",
+    });
+  } catch (err) {
+    res.json({
+      code: 400,
+      message: "Không tồn tại",
+    });
   }
 };
