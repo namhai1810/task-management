@@ -13,7 +13,4 @@ router.patch("/edit/:id", taskController.edit)
 router.delete("/delete/:id", taskController.delete)
 
 
-
-
-
 module.exports = router;
