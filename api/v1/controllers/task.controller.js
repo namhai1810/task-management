@@ -136,3 +136,26 @@ module.exports.create = async (req, res) => {
     });
   }
 };
+
+// [POST] /api/v1/tasks/edit/:id
+module.exports.edit = async (req, res) => {
+  try {
+    const id = req.params.id;
+    await Task.updateOne(
+      {
+        _id: id,
+      },
+      req.body
+    );
+    res.json({
+      code: 200,
+      message: "Cập nhập thành công",
+    });
+  } catch (err) {
+    res.json({
+      code: 400,
+      message: "Tạo mới thất bại",
+    });
+  }
+};
+
